@@ -1,0 +1,13 @@
+<Sketcher>:
+    overlays_container: overlays_container
+    background_color: 0, 0, 0, 0
+    size_hint: None, None
+    OverlaysContainer:
+        id: overlays_container
+        size: root.size
+        canvas:
+            Color:
+                rgba: root.background_color
+            Rectangle:
+                pos: self.pos
+                size: self.size
