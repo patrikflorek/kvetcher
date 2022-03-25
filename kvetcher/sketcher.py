@@ -3,7 +3,7 @@ from kivy.uix.relativelayout import RelativeLayout
 from kivy.properties import BoundedNumericProperty, ObjectProperty
 from kivy.lang.builder import Builder
 
-from kvetcher.overlay import Overlay
+from kvetcher.draw import Overlay
 
 
 Builder.load_file('kvetcher/sketcher.kv')
