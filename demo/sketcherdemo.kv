@@ -1,3 +1,5 @@
+#:import Sketcher kvetcher.sketcher.Sketcher
+
 <SketcherDemoAppRoot>:
     sketcher: sketcher
     sketcher_container: sketcher_container
@@ -9,13 +11,14 @@
             size: self.size
     BoxLayout:
         orientation: 'vertical'
-        RelativeLayout:
+        AnchorLayout:
             id: sketcher_container
+            anchor_x: 'center'
+            anchor_y: 'center'
             Sketcher:
                 id: sketcher
                 background_color: 1, 0, 1, 0.4
-                size: 280, 560
-                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                size: 560, 280 
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None

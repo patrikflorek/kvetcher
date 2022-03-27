@@ -4,12 +4,9 @@ from kivy.graphics.texture import Texture
 
 
 class Overlay(Image):
-    def __init__(self, name, active, opacity, texture, pen, **kwargs):
+    def __init__(self, name, **kwargs):
         super(Overlay, self).__init__(**kwargs)
         self.name = name
-        self.active = active
-        self.opacity = opacity
-        self.texture = texture if texture is not None else Texture.create(size=self.size)
 
 
 class OverlaysContainer(RelativeLayout):
