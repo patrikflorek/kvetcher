@@ -69,7 +69,12 @@ class SketcherDemoApp(App):
     def build(self):
         app_root = SketcherDemoAppRoot()
         self.sketcher = app_root.sketcher
+        self.sketcher_container = app_root.sketcher_container
         return app_root
+
+    def reset_transformations(self):
+        self.sketcher.apply_transform(self.sketcher.transform_inv)
+        self.sketcher.center = self.sketcher_container.center
 
 
 if __name__ == '__main__':
