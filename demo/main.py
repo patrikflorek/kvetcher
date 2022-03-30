@@ -88,6 +88,12 @@ class SketcherDemoApp(App):
         self.sketcher.apply_transform(self.sketcher.transform_inv)
         self.sketcher.center = self.sketcher_container.center
 
+    def clear_overlays(self):
+        new_sketcher_data = self.sketcher.data
+        for overlay_data in new_sketcher_data:
+            overlay_data['texture'] = None
+        self.sketcher.data = new_sketcher_data
+
 
 if __name__ == '__main__':
     app = SketcherDemoApp()
