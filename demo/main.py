@@ -7,7 +7,11 @@ from kivy.app import App
 from kivy.uix.screenmanager import Screen
 from kivy.properties import ObjectProperty
 from kivy.core.image import Image as CoreImage
+from kivy.metrics import dp
 from kivy.clock import Clock
+
+from pen import Pen
+
 
 class SketcherDemoAppRoot(Screen):
     sketcher = ObjectProperty()
@@ -19,48 +23,56 @@ class SketcherDemoAppRoot(Screen):
     def _initialize_sketcher(self, dt):
         self.sketcher.size = 320, 640  # overwrites definition from kv file
 
+        self.pen_texture = Pen(color=(1, 0, 0, 1), size=20).texture
+
         self.sketcher.data = [
             {
                 'name': 'Corals',
-                'texture': CoreImage('assets/img/corals_320x640.png').texture,
                 'active': True,
-                'opacity': 1.0
+                'texture': CoreImage('assets/img/corals_320x640.png').texture,
+                'opacity': 1.0,
+                'pen_texture': self.pen_texture
             },
             {
                 'name': 'Octopus',
-                'texture': CoreImage('assets/img/octopus_320x640.png').texture,
                 'active': False,
-                'opacity': 1.0
+                'texture': CoreImage('assets/img/octopus_320x640.png').texture,
+                'opacity': 1.0,
+                'pen_texture': self.pen_texture
             },
             {
                 'name': 'Ice cream',
-                'texture': CoreImage('assets/img/icecream_320x640.png').texture,
                 'active': False,
-                'opacity': 1.0
+                'texture': CoreImage('assets/img/icecream_320x640.png').texture,
+                'opacity': 1.0,
+                'pen_texture': self.pen_texture
             }
         ]
 
-        Clock.schedule_once(self._update_sketcher, 5)
+        # Clock.schedule_once(self._update_sketcher, 5)
 
     def _update_sketcher(self, dt):
         self.sketcher.data = [
             {
                 'name': 'Octopus',
-                'texture': CoreImage('assets/img/octopus_320x640.png').texture,
                 'active': False,
-                'opacity': 0.6
+                'texture': CoreImage('assets/img/octopus_320x640.png').texture,
+                'opacity': 0.6,
+                'pen_texture': self.pen.texture
             },
             {
                 'name': 'Ice cream',
-                'texture': CoreImage('assets/img/icecream_320x640.png').texture,
                 'active': False,
-                'opacity': 0.6
+                'texture': CoreImage('assets/img/icecream_320x640.png').texture,
+                'opacity': 0.6,
+                'pen_texture': self.pen.texture
             },
             {
                 'name': 'Corals',
-                'texture': CoreImage('assets/img/corals_320x640.png').texture,
                 'active': True,
-                'opacity': 0.6
+                'texture': CoreImage('assets/img/corals_320x640.png').texture,
+                'opacity': 0.6,
+                'pen_texture': self.pen.texture
             }
         ]
 

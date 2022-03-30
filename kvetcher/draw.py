@@ -1,12 +1,64 @@
 from kivy.uix.image import Image
 from kivy.uix.relativelayout import RelativeLayout
-from kivy.graphics.texture import Texture
+from kivy.graphics import Fbo, Rectangle
 
 
 class Overlay(Image):
     def __init__(self, name, **kwargs):
         super(Overlay, self).__init__(**kwargs)
         self.name = name
+        self.active = False
+        self.texture = None
+        self.pen_texture = None
+
+    def on_touch_down(self, touch):
+        return False  # do nothing; other touch events will take care of the stroke
+
+    def on_touch_move(self, touch):
+        if (not self.active or self.pen_texture is None):
+            return False
+
+        prev_x, prev_y = touch.ud['stroke'][-2]
+        x_dist = abs(touch.x - prev_x)
+        y_dist = abs(touch.y - prev_y)
+        max_dist = max(x_dist, y_dist)
+        dx = 0 if max_dist == 0 else (touch.x - prev_x) / max_dist
+        dy = 0 if max_dist == 0 else (touch.y - prev_y) / max_dist
+
+        fbo = Fbo(size=self.size)
+        with fbo:
+            Rectangle(size=self.size, pos=self.pos, texture=self.texture)  # original overlay's texture
+            pen_size = self.pen_texture.size
+
+            for i in range(int(max_dist)):
+                x = int(prev_x + i * dx)
+                y = int(prev_y + i * dy)
+                Rectangle(size=pen_size, 
+                        pos=(x - pen_size[0] / 2, y - pen_size[1] / 2),
+                        texture=self.pen_texture)
+        fbo.draw()
+        self.texture = fbo.texture
+
+        return False
+
+    def on_touch_up(self, touch):
+        if (not self.active or self.pen_texture is None):
+            return False
+
+        if len(touch.ud['stroke']) == 2:
+            # no movement between touch_down and touch_up
+            fbo = Fbo(size=self.size)
+            with fbo:
+                Rectangle(size=self.size, pos=self.pos, texture=self.texture)  # original overlay's texture
+                pen_size = self.pen_texture.size
+
+                Rectangle(size=pen_size, 
+                          pos=(touch.x - pen_size[0] / 2, touch.y - pen_size[1] / 2),
+                          texture=self.pen_texture)
+            fbo.draw()
+            self.texture = fbo.texture
+
+        return False
 
 
 class OverlaysContainer(RelativeLayout):
@@ -35,8 +87,6 @@ class OverlaysContainer(RelativeLayout):
         self._stroke_touch = touch
         touch.ud['stroke'] = [touch.pos]
 
-        print('OverlaysContainer.on_touch_down() creates stroke:', touch)
-
         super(OverlaysContainer, self).on_touch_down(touch)
 
         return False  # parent (Sketcher instance) can take care of touch
@@ -49,8 +99,6 @@ class OverlaysContainer(RelativeLayout):
             return False  # no need to process if it's not stroke touch
 
         touch.ud['stroke'].append(touch.pos)
-
-        print('OverlaysContainer.on_touch_move() tracks stroke:', touch)
 
         super(OverlaysContainer, self).on_touch_move(touch)  # children (Overlay instances) can take care of stroke touch
 
@@ -70,8 +118,6 @@ class OverlaysContainer(RelativeLayout):
         touch.ud['stroke'].append(touch.pos)
 
         self._stroke_touch = None
-
-        print('OverlaysContainer.on_touch_up() releases stroke:', touch)
 
         if self.collide_point(touch.x, touch.y):
             super(OverlaysContainer, self).on_touch_up(touch)  # children can take care of stroke touch

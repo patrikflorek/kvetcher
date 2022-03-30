@@ -1,7 +1,6 @@
 from kivy.uix.scatter import Scatter
 from kivy.graphics.texture import Texture
 from kivy.properties import BoundedNumericProperty, ObjectProperty
-from kivy.metrics import dp
 from kivy.clock import Clock
 from kivy.lang.builder import Builder
 
@@ -42,16 +41,20 @@ class Sketcher(Scatter):
                                   size=self.size)
                 self._overlays_dict[overlay_name] = overlay
 
-            overlay.opacity = overlay_data['opacity']
+            overlay.active = overlay_data['active']
+            overlay.opacity = overlay_data['opacity'] 
             if overlay_data['texture'] is None:
                 overlay.texture = Texture.create(size=self.size)
             else:
                 overlay.texture = overlay_data['texture']
+            overlay.pen_texture = overlay_data['pen_texture']
 
             self._data.append({
                 'name': overlay.name,
+                'active': overlay.active,
+                'texture': overlay.texture,
                 'opacity': overlay.opacity,
-                'texture': overlay.texture
+                'pen_texture': overlay.pen_texture
             })
             self.overlays_container.add_widget(overlay)
 
