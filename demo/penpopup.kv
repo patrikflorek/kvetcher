@@ -1,0 +1,102 @@
+<ColorSwatchButton@ButtonBehavior+Image>:
+    color: 0, 0, 0, 0
+    size_hint: None, None
+    size: '48dp', '48dp'
+
+
+<PenPopup>:
+    title: 'Pen settings'
+    pen_color: (1, 1, 0, 1)
+    pen_size: 20
+    size_hint_y: 0.9
+    BoxLayout:
+        orientation: 'vertical'
+        padding: '10dp'
+        spacing: '10dp'
+        Label:
+            text: f'Size: {int(pen_size_slider.value)}'
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
+            size_hint_y: None
+            height: '32dp'
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: '60dp'
+            Label:
+                text: str(int(pen_size_slider.min))
+                font_size: '14dp'
+                text_size: self.size
+                halign: 'center'
+                valign: 'middle'
+                size_hint_x: None
+                width: '40dp'
+            Slider:
+                id: pen_size_slider
+                min: 1
+                max: 100
+                value: root.pen_size
+                size_hint_y: None
+                height: '60dp'
+            Label:
+                text: str(int(pen_size_slider.max))
+                font_size: '14dp'
+                text_size: self.size
+                halign: 'center'
+                valign: 'middle'
+                size_hint_x: None
+                width: '40dp'
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
+            size_hint_y: None
+            height: 160
+            Image:
+                color: 0, 0, 0, 0
+                size_hint: None, None
+                size: pen_size_slider.value, pen_size_slider.value
+                canvas:
+                    Color:
+                        rgba: root.pen_color
+                    Ellipse:
+                        pos: self.pos
+                        size: self.size
+        StackLayout:
+            orientation: 'lr-tb'
+            spacing: '14dp'
+            ColorSwatchButton:
+                color: 0, 0, 0, 1
+                on_release: root.pen_color = self.color
+            ColorSwatchButton:
+                color: 1, 0, 0, 1
+                on_release: root.pen_color = self.color
+            ColorSwatchButton:
+                color: 1, 1, 0, 1
+                on_release: root.pen_color = self.color
+            ColorSwatchButton:
+                color: 0, 1, 0, 1
+                on_release: root.pen_color = self.color
+            ColorSwatchButton:
+                color: 0, 1, 1, 1
+                on_release: root.pen_color = self.color
+            ColorSwatchButton:
+                color: 0, 0, 1, 1
+                on_release: root.pen_color = self.color
+            ColorSwatchButton:
+                color: 1, 0, 1, 1
+                on_release: root.pen_color = self.color
+            ColorSwatchButton:
+                color: 1, 1, 1, 1
+                on_release: root.pen_color = self.color
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: '32dp'
+            Button:
+                text: 'Dismis'
+                on_release: root.dismiss()
+            Button:
+                text: 'Save'
+                background_color: 0, 1, 0, 1
+                on_release: app.update_pen(color=root.pen_color, size=pen_size_slider.value)

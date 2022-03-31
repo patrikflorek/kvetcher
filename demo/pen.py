@@ -1,15 +1,22 @@
 from kivy.graphics import Color, Ellipse, Fbo
+from kivy.clock import Clock
 
 class Pen():
+    texture = None
+
     def __init__(self, color, size, **kwargs):
         super(Pen, self).__init__(**kwargs)
-        self.size = (size, size)
+        Clock.schedule_once(lambda dt:self.update_texture(color=color, size=size), 0)
+        
+    def update_texture(self, color, size):
         self.color = color
+        self.size = size
+        
+        fbo = Fbo(size=(size, size))
 
-        fbo = Fbo(size=self.size)
         with fbo:
             Color(rgba=color)
-            Ellipse(size=self.size, pos=(0, 0))
+            Ellipse(size=(size, size), pos=(0, 0))
         fbo.draw()
 
         self.texture = fbo.texture

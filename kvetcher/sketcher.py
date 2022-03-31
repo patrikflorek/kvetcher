@@ -33,39 +33,42 @@ class Sketcher(Scatter):
         self.overlays_container.clear_widgets()
 
         for overlay_data in data_list:
-            overlay_id = overlay_data['id']
+            overlay_id = overlay_data['id']  # required
+
+            if 'name' not in overlay_data:
+                overlay_data['name'] = ''
+
+            if 'active' not in overlay_data:
+                overlay_data['active'] = True
+
+            if ('texture' not in overlay_data 
+                    or overlay_data['texture'] is None):
+                overlay_data['texture'] = Texture.create(size=self.size)
+
+            if 'opacity' not in overlay_data:
+                overlay_data['opacity'] = 1.0
+
+            if 'pen_texture' not in overlay_data:
+                overlay_data['pen_texture'] = None
+            
+            clean_overlay_data = {
+                'id': overlay_data['id'],
+                'name': overlay_data['name'],
+                'active': overlay_data['active'],
+                'texture': overlay_data['texture'],
+                'opacity': overlay_data['opacity'],
+                'pen_texture': overlay_data['pen_texture']
+            }
+
+            self._data.append(clean_overlay_data)
+
             if overlay_id in self._overlays_dict:
                 overlay = self._overlays_dict[overlay_id]
+                overlay.data = clean_overlay_data
             else:
-                overlay = Overlay(id=overlay_id, 
+                overlay = Overlay(data=clean_overlay_data, 
                                   size=self.size)
                 self._overlays_dict[overlay_id] = overlay
-
-            overlay.name = overlay_data['name']
-            
-            if 'active' in overlay_data:
-                overlay.active = overlay_data['active']
-
-            if ('texture' in overlay_data 
-                and overlay_data['texture'] is not None):
-                overlay.texture = overlay_data['texture']
-            else:
-                overlay.texture = Texture.create(size=self.size)
-            
-            if 'opacity' in overlay_data:    
-                overlay.opacity = overlay_data['opacity']
-            
-            if 'pen_texture' in overlay_data:
-                overlay.pen_texture = overlay_data['pen_texture']
-
-            self._data.append({
-                'id': overlay.id,
-                'name': overlay.name,
-                'active': overlay.active,
-                'texture': overlay.texture,
-                'opacity': overlay.opacity,
-                'pen_texture': overlay.pen_texture
-            })
 
             self.overlays_container.add_widget(overlay)
 
