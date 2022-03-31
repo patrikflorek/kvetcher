@@ -93,13 +93,13 @@ class OverlaysContainer(RelativeLayout):
         return False  # parent (Sketcher instance) can take care of touch
 
     def on_touch_move(self, touch):
-        if not self.collide_point(touch.x, touch.y):
-            return False  # no drawing allowed outside the area
-
         if touch != self._stroke_touch:
             return False  # no need to process if it's not stroke touch
 
-        touch.ud['stroke'].append(touch.pos)
+        touch.ud['stroke'].append(touch.pos)  # keep touch position for overlays to use it later 
+
+        if not self.collide_point(touch.x, touch.y):
+            return False  # no drawing allowed outside the area
 
         super(OverlaysContainer, self).on_touch_move(touch)  # children (Overlay instances) can take care of stroke touch
 
