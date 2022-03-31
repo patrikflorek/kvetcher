@@ -33,33 +33,44 @@ class Sketcher(Scatter):
         self.overlays_container.clear_widgets()
 
         for overlay_data in data_list:
-            overlay_name = overlay_data['name']
-            if overlay_name in self._overlays_dict:
-                overlay = self._overlays_dict[overlay_name]
+            overlay_id = overlay_data['id']
+            if overlay_id in self._overlays_dict:
+                overlay = self._overlays_dict[overlay_id]
             else:
-                overlay = Overlay(name=overlay_name, 
+                overlay = Overlay(id=overlay_id, 
                                   size=self.size)
-                self._overlays_dict[overlay_name] = overlay
+                self._overlays_dict[overlay_id] = overlay
 
-            overlay.active = overlay_data['active']
-            overlay.opacity = overlay_data['opacity'] 
-            if overlay_data['texture'] is None:
-                overlay.texture = Texture.create(size=self.size)
-            else:
+            overlay.name = overlay_data['name']
+            
+            if 'active' in overlay_data:
+                overlay.active = overlay_data['active']
+
+            if ('texture' in overlay_data 
+                and overlay_data['texture'] is not None):
                 overlay.texture = overlay_data['texture']
-            overlay.pen_texture = overlay_data['pen_texture']
+            else:
+                overlay.texture = Texture.create(size=self.size)
+            
+            if 'opacity' in overlay_data:    
+                overlay.opacity = overlay_data['opacity']
+            
+            if 'pen_texture' in overlay_data:
+                overlay.pen_texture = overlay_data['pen_texture']
 
             self._data.append({
+                'id': overlay.id,
                 'name': overlay.name,
                 'active': overlay.active,
                 'texture': overlay.texture,
                 'opacity': overlay.opacity,
                 'pen_texture': overlay.pen_texture
             })
+
             self.overlays_container.add_widget(overlay)
 
             # Delete overlays not listed in data_list argument
-            overlay_names = set([d['name'] for d in data_list])
-            omitted_overlay_names = set(self._overlays_dict.keys()) - overlay_names
-            for name in omitted_overlay_names:
-                del self._overlays_dict[name]
+            given_ids = set([d['id'] for d in data_list])
+            omitted_overlays_ids = set(self._overlays_dict.keys()) - given_ids
+            for id in omitted_overlays_ids:
+                del self._overlays_dict[id]

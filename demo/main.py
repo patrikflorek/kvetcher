@@ -27,6 +27,7 @@ class SketcherDemoAppRoot(Screen):
 
         self.sketcher.data = [
             {
+                'id': '01',
                 'name': 'Corals',
                 'active': True,
                 'texture': CoreImage('assets/img/corals_320x640.png').texture,
@@ -34,6 +35,7 @@ class SketcherDemoAppRoot(Screen):
                 'pen_texture': self.pen_texture
             },
             {
+                'id': '02',
                 'name': 'Octopus',
                 'active': False,
                 'texture': CoreImage('assets/img/octopus_320x640.png').texture,
@@ -41,6 +43,7 @@ class SketcherDemoAppRoot(Screen):
                 'pen_texture': self.pen_texture
             },
             {
+                'id': '03',
                 'name': 'Ice cream',
                 'active': False,
                 'texture': CoreImage('assets/img/icecream_320x640.png').texture,
@@ -54,6 +57,7 @@ class SketcherDemoAppRoot(Screen):
     def _update_sketcher(self, dt):
         self.sketcher.data = [
             {
+                'id': '02',
                 'name': 'Octopus',
                 'active': False,
                 'texture': CoreImage('assets/img/octopus_320x640.png').texture,
@@ -61,6 +65,7 @@ class SketcherDemoAppRoot(Screen):
                 'pen_texture': self.pen.texture
             },
             {
+                'id': '03',
                 'name': 'Ice cream',
                 'active': False,
                 'texture': CoreImage('assets/img/icecream_320x640.png').texture,
@@ -68,6 +73,7 @@ class SketcherDemoAppRoot(Screen):
                 'pen_texture': self.pen.texture
             },
             {
+                'id': '01',
                 'name': 'Corals',
                 'active': True,
                 'texture': CoreImage('assets/img/corals_320x640.png').texture,

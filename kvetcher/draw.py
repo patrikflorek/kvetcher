@@ -4,9 +4,10 @@ from kivy.graphics import Fbo, Rectangle
 
 
 class Overlay(Image):
-    def __init__(self, name, **kwargs):
+    def __init__(self, id, **kwargs):
         super(Overlay, self).__init__(**kwargs)
-        self.name = name
+        self.id = id
+        self.name = None
         self.active = False
         self.texture = None
         self.pen_texture = None
