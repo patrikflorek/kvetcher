@@ -18,7 +18,7 @@
             Sketcher:
                 id: sketcher
                 background_color: 1, 0, 1, 0.4
-                size: 560, 280 
+                size: 560, 280
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
@@ -30,7 +30,8 @@
                 text: 'Clear'
                 on_release: app.clear_overlays()
             Button:
-                text: 'Layouts'
+                text: 'Overlays'
+                on_release: app.open_overlays_popup()
             Button:
                 text: 'Pen'
                 on_release: app.open_pen_popup()

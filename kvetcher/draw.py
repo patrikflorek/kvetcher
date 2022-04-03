@@ -1,7 +1,6 @@
 from kivy.uix.image import Image
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.graphics import Fbo, Rectangle
-from kivy.properties import DictProperty
 
 
 class Overlay(Image):
@@ -18,6 +17,7 @@ class Overlay(Image):
     def data(self, data):
         self._data = data
         self.texture = data['texture']
+        self.opacity = data['opacity']
 
     def on_texture(self, instance, texture):
         self.data['texture'] = texture

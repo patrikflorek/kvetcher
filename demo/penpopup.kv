@@ -34,8 +34,9 @@
                 width: '40dp'
             Slider:
                 id: pen_size_slider
-                min: 1
+                min: 2
                 max: 100
+                step: 2  # to eliminate texture defects in this pen implementation
                 value: root.pen_size
                 size_hint_y: None
                 height: '60dp'
@@ -94,7 +95,7 @@
             size_hint_y: None
             height: '32dp'
             Button:
-                text: 'Dismis'
+                text: 'Dismiss'
                 on_release: root.dismiss()
             Button:
                 text: 'Save'

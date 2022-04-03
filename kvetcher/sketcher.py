@@ -43,7 +43,7 @@ class Sketcher(Scatter):
 
             if ('texture' not in overlay_data 
                     or overlay_data['texture'] is None):
-                overlay_data['texture'] = Texture.create(size=self.size)
+                overlay_data['texture'] = Texture.create(size=self.size, colorfmt='rgba')
 
             if 'opacity' not in overlay_data:
                 overlay_data['opacity'] = 1.0

@@ -9,10 +9,15 @@ from kivy.core.image import Image as CoreImage
 from kivy.clock import Clock
 
 from pen import Pen
+from demo.overlayspopup import OverlaysPopup
 from demo.penpopup import PenPopup
 
 
+from id_generator import get_new_id
+
+
 class SketcherDemoAppRoot(Screen):
+    sketcher_container = ObjectProperty()
     sketcher = ObjectProperty()
 
     def __init__(self, **kwargs):
@@ -21,13 +26,13 @@ class SketcherDemoAppRoot(Screen):
         Clock.schedule_once(self._initialize_sketcher)  # wait until the component is built
 
     def _initialize_sketcher(self, dt):
-        self.sketcher.size = 320, 640  # overwrites definition from kv file
+        self.sketcher.size = 320, 640  # overwrites size from kv file
 
         self.pen_texture = app.pen.texture
 
         self.sketcher.data = [
             {
-                'id': '01',
+                'id': get_new_id(),
                 'name': 'Corals',
                 'active': True,
                 'texture': CoreImage('assets/img/corals_320x640.png').texture,
@@ -35,7 +40,7 @@ class SketcherDemoAppRoot(Screen):
                 'pen_texture': self.pen_texture
             },
             {
-                'id': '02',
+                'id': get_new_id(),
                 'name': 'Octopus',
                 'active': False,
                 'texture': CoreImage('assets/img/octopus_320x640.png').texture,
@@ -43,42 +48,12 @@ class SketcherDemoAppRoot(Screen):
                 'pen_texture': self.pen_texture
             },
             {
-                'id': '03',
+                'id': get_new_id(),
                 'name': 'Ice cream',
                 'active': False,
                 'texture': CoreImage('assets/img/icecream_320x640.png').texture,
                 'opacity': 1.0,
                 'pen_texture': self.pen_texture
-            }
-        ]
-
-        # Clock.schedule_once(self._update_sketcher, 5)
-
-    def _update_sketcher(self, dt):
-        self.sketcher.data = [
-            {
-                'id': '02',
-                'name': 'Octopus',
-                'active': False,
-                'texture': CoreImage('assets/img/octopus_320x640.png').texture,
-                'opacity': 0.6,
-                'pen_texture': self.pen.texture
-            },
-            {
-                'id': '03',
-                'name': 'Ice cream',
-                'active': False,
-                'texture': CoreImage('assets/img/icecream_320x640.png').texture,
-                'opacity': 0.6,
-                'pen_texture': self.pen.texture
-            },
-            {
-                'id': '01',
-                'name': 'Corals',
-                'active': True,
-                'texture': CoreImage('assets/img/corals_320x640.png').texture,
-                'opacity': 0.6,
-                'pen_texture': self.pen.texture
             }
         ]
 
@@ -86,6 +61,7 @@ class SketcherDemoAppRoot(Screen):
 class SketcherDemoApp(App):
     def __init__(self, **kwargs):
         super(SketcherDemoApp, self).__init__(**kwargs)
+        self.overlays_popup = OverlaysPopup()
         self.pen = Pen(color=(0, 1, 1, 1), size=20)
         self.pen_popup = PenPopup()
 
@@ -105,6 +81,15 @@ class SketcherDemoApp(App):
         for overlay_data in new_sketcher_data:
             overlay_data['texture'] = None
         self.sketcher.data = new_sketcher_data
+
+    def open_overlays_popup(self):
+        self.overlays_popup.overlays_data_list = self.sketcher.data
+        self.overlays_popup.pen_texture = self.pen.texture  # to add new overlay
+        self.overlays_popup.open()
+
+    def update_overlays_data(self, data):
+        self.sketcher.data = [d for d in data if d]  # omit deleted overlays
+        self.overlays_popup.dismiss()
 
     def open_pen_popup(self):
         self.pen_popup.pen_color = self.pen.color
