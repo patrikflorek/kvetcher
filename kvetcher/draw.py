@@ -1,33 +1,32 @@
 from kivy.uix.image import Image
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.graphics import Fbo, Rectangle
+from kivy.graphics.texture import Texture
+
+
+def copy_texture(texture):
+    fbo = Fbo(size=texture.size)
+    with fbo:
+        Rectangle(size=fbo.size, texture=texture)
+    fbo.draw()
+
+    return fbo.texture
 
 
 class Overlay(Image):
-    def __init__(self, data, **kwargs):
+    def __init__(self, **kwargs):
         super(Overlay, self).__init__(**kwargs)
-        self.data = data
-        self.texture = data['texture']
-
-    @property
-    def data(self):
-        return self._data
-
-    @data.setter
-    def data(self, data):
-        self._data = data
-        self.texture = data['texture']
-        self.opacity = data['opacity']
-
-    def on_texture(self, instance, texture):
-        self.data['texture'] = texture
+        self.name = ''
+        self.active = True
+        self.texture = Texture.create(size=self.size, colorfmt='rgba')
+        self.opacity = 1.0
+        self.pen_texture = None
 
     def on_touch_down(self, touch):
         return False  # do nothing; other touch events will take care of the stroke
 
     def on_touch_move(self, touch):
-        if (not self.data['active'] 
-                or 'pen_texture' not in self.data or self.data['pen_texture'] is None):
+        if not self.active  or self.pen_texture is None:
             return False
 
         prev_x, prev_y = touch.ud['stroke'][-2]
@@ -40,21 +39,21 @@ class Overlay(Image):
         fbo = Fbo(size=self.size)
         with fbo:
             Rectangle(size=self.size, pos=self.pos, texture=self.texture)  # original overlay's texture
-            pen_size = self.data['pen_texture'].size
+            pen_size = self.pen_texture.size
 
             for i in range(int(max_dist)):
                 x = int(prev_x + i * dx)
                 y = int(prev_y + i * dy)
                 Rectangle(size=pen_size, 
                         pos=(x - pen_size[0] / 2, y - pen_size[1] / 2),
-                        texture=self.data['pen_texture'])
+                        texture=self.pen_texture)
         fbo.draw()
         self.texture = fbo.texture
 
         return False
 
     def on_touch_up(self, touch):
-        if (not self.data['active'] or self.data['pen_texture'] is None):
+        if not self.active or self.pen_texture is None:
             return False
 
         if len(touch.ud['stroke']) == 2:
@@ -62,11 +61,11 @@ class Overlay(Image):
             fbo = Fbo(size=self.size)
             with fbo:
                 Rectangle(size=self.size, pos=self.pos, texture=self.texture)  # original overlay's texture
-                pen_size = self.data['pen_texture'].size
+                pen_size = self.pen_texture.size
 
                 Rectangle(size=pen_size, 
                           pos=(touch.x - pen_size[0] / 2, touch.y - pen_size[1] / 2),
-                          texture=self.data['pen_texture'])
+                          texture=self.pen_texture)
             fbo.draw()
             self.texture = fbo.texture
 
