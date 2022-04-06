@@ -5,7 +5,8 @@ from kivy.lang.builder import Builder
 
 Builder.load_file('kvetcher/sketcher.kv')
 
-from kvetcher.draw import Overlay, copy_texture
+from kvetcher.draw import Overlay
+from kvetcher.draw import copy_texture
 
 
 class Sketcher(Scatter):
@@ -62,7 +63,7 @@ class Sketcher(Scatter):
                 overlay.active = True
 
             if 'texture' in overlay_data and overlay_data['texture'] is not None:
-                overlay.texture = copy_texture(overlay_data['texture'])
+                overlay.texture = copy_texture(overlay_data['texture'], self.size)
             else:
                 overlay.texture = Texture.create(size=self.size, colorfmt='rgba')
 

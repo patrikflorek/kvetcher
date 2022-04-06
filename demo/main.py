@@ -26,7 +26,7 @@ class SketcherDemoAppRoot(Screen):
         Clock.schedule_once(self._initialize_sketcher)  # wait until the component is built
 
     def _initialize_sketcher(self, dt):
-        self.sketcher.size = 320, 640  # overwrites size from kv file
+        self.sketcher.size = 300, 600  # overwrites size from kv file
 
         self.pen_texture = app.pen.texture
 
