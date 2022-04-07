@@ -4,6 +4,7 @@ sys.path.append(os.path.abspath('../kvetcher'))
 
 from kivy.app import App
 from kivy.uix.screenmanager import Screen
+from kivy.uix.dropdown import DropDown
 from kivy.properties import ObjectProperty
 from kivy.core.image import Image as CoreImage
 from kivy.clock import Clock
@@ -16,7 +17,13 @@ from demo.penpopup import PenPopup
 from id_generator import get_new_id
 
 
+class PenModeDropDown(DropDown):
+    pass
+
+
 class SketcherDemoAppRoot(Screen):
+    pen_mode_dropdown_main_button = ObjectProperty()
+
     sketcher_container = ObjectProperty()
     sketcher = ObjectProperty()
 
@@ -37,7 +44,8 @@ class SketcherDemoAppRoot(Screen):
                 'active': True,
                 'texture': CoreImage('assets/img/corals_320x640.png').texture,
                 'opacity': 1.0,
-                'pen_texture': self.pen_texture
+                'pen_texture': self.pen_texture,
+                'pen_mode': 'pen'
             },
             {
                 'id': get_new_id(),
@@ -45,7 +53,8 @@ class SketcherDemoAppRoot(Screen):
                 'active': False,
                 'texture': CoreImage('assets/img/octopus_320x640.png').texture,
                 'opacity': 1.0,
-                'pen_texture': self.pen_texture
+                'pen_texture': self.pen_texture,
+                'pen_mode': 'pen'
             },
             {
                 'id': get_new_id(),
@@ -53,9 +62,20 @@ class SketcherDemoAppRoot(Screen):
                 'active': False,
                 'texture': CoreImage('assets/img/icecream_320x640.png').texture,
                 'opacity': 1.0,
-                'pen_texture': self.pen_texture
+                'pen_texture': self.pen_texture,
+                'pen_mode': 'pen'
             }
         ]
+
+    def _set_pen_mode(self, instance, mode):
+        self.pen_mode_dropdown_main_button.text = mode.capitalize()
+        app.set_pen_mode(mode)
+
+    def open_pen_mode_dropdown(self, instance):
+        dropdown = PenModeDropDown()
+        dropdown.container.padding = [0, '10dp']
+        dropdown.bind(on_select=self._set_pen_mode)
+        dropdown.open(instance)
 
 
 class SketcherDemoApp(App):
@@ -90,6 +110,12 @@ class SketcherDemoApp(App):
     def update_overlays_data(self, data):
         self.sketcher.data = [d for d in data if d]  # omit deleted overlays
         self.overlays_popup.dismiss()
+
+    def set_pen_mode(self, mode):
+        new_sketcher_data = self.sketcher.data
+        for overlay_data in new_sketcher_data:
+            overlay_data['pen_mode'] = mode
+        self.sketcher.data = new_sketcher_data
 
     def open_pen_popup(self):
         self.pen_popup.pen_color = self.pen.color

@@ -44,12 +44,15 @@ class Overlay(Image):
         self.opacity = 1.0
         self.pen_texture = None
         self.pen_bitmap = None
+        self.pen_mode = 'pen'
+        self.eraser_bitmap = None
 
     def on_texture(self, instance, texture):
         self.bitmap = texture_to_bitmap(texture)
 
     def on_pen_texture(self, instance, pen_texture):
         self.pen_bitmap = texture_to_bitmap(pen_texture)
+        self.eraser_bitmap = PILImage.new('RGBA', self.pen_bitmap.size)
 
     def on_touch_down(self, touch):
         return False  # do nothing; other touch events will take care of the stroke
@@ -100,9 +103,14 @@ class Overlay(Image):
             
             pen_crop_box = self._get_pen_crop_box(x_i, y_i)
             pen_region = self.pen_bitmap.crop(pen_crop_box)
-
+            
             overlay_paste_box = self._get_overlay_paste_box(x_i, y_i)
-            self.bitmap.paste(pen_region, overlay_paste_box, pen_region)
+            
+            if self.pen_mode == 'pen':
+                self.bitmap.paste(pen_region, overlay_paste_box, pen_region)
+            elif self.pen_mode == 'eraser':
+                eraser_region = self.eraser_bitmap.crop(pen_crop_box)
+                self.bitmap.paste(eraser_region, overlay_paste_box, pen_region)
         
         self.texture = bitmap_to_texture(self.bitmap)  # ineffective since on_texture creates a new bitmap copy
 
@@ -132,18 +140,12 @@ class Overlay(Image):
         if not self.active or self.pen_texture is None:
             return False
 
+        x = int(touch.x)
+        y = int(touch.y)
+
         if len(touch.ud['stroke']) == 2:
             # no movement between touch_down and touch_up
-            fbo = Fbo(size=self.size)
-            with fbo:
-                Rectangle(size=self.size, pos=self.pos, texture=self.texture)  # original overlay's texture
-                pen_size = self.pen_texture.size
-
-                Rectangle(size=pen_size, 
-                          pos=(touch.x - pen_size[0] / 2, touch.y - pen_size[1] / 2),
-                          texture=self.pen_texture)
-            fbo.draw()
-            self.texture = fbo.texture
+            self._pen_make_dot(x, y)
 
         return False
 

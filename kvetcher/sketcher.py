@@ -31,7 +31,8 @@ class Sketcher(Scatter):
                 'active': overlay.active,
                 'texture': copy_texture(overlay.texture),
                 'opacity': overlay.opacity,
-                'pen_texture': copy_texture(overlay.pen_texture)
+                'pen_texture': copy_texture(overlay.pen_texture),
+                'pen_mode': overlay.pen_mode
             } 
 
             exported_overlays_data.append(overlay_data)
@@ -76,6 +77,11 @@ class Sketcher(Scatter):
                 overlay.pen_texture = copy_texture(overlay_data['pen_texture'])
             else:
                 overlay.pen_texture = None
+
+            if 'pen_mode' in overlay_data:
+                overlay.pen_mode = overlay_data['pen_mode']
+            else:
+                overlay.pen_mode = 'pen'
 
             self.overlays_container.add_widget(overlay)
 
