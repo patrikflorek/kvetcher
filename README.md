@@ -1,3 +1,3 @@
 # kvetcher
 
-A kivy component for drawing multi-layer bitmaps with a finger
+A kivy component for drawing on multiple layers of bitmaps with a finger
