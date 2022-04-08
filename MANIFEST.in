@@ -1,0 +1,3 @@
+include *LICENSE *README.md
+recursive-include demo *
+recursive-include kvetcher *.py *.kv
